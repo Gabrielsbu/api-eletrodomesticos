@@ -1,6 +1,5 @@
 package com.electr.eletrodomesticos.controllers;
 
-
 import com.electr.eletrodomesticos.domain.dto.EletrodomesticoDTO;
 import com.electr.eletrodomesticos.domain.services.EletrodomesticoService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-
-@RequestMapping("/api/v1/eletrodomesticos")
+@RequestMapping("/eletrodomesticos")
 @RestController
 @RequiredArgsConstructor
 public class EletrodomesticoController {

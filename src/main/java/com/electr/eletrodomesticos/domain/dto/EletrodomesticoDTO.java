@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,6 +14,10 @@ public class EletrodomesticoDTO {
 
     private Long eletroId;
     private String nome;
+    private Integer tempo;
+    private Integer quantidade;
     private Integer potencia;
+    private Integer diasPorMes;
     private String avatar;
+    private Double valorPorMes;
 }

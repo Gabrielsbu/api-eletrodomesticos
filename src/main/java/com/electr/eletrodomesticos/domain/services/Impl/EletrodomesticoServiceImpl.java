@@ -9,6 +9,7 @@ import com.electr.eletrodomesticos.domain.services.EletrodomesticoService;
 import com.electr.eletrodomesticos.domain.utils.EletrodomesticoConverter;
 import com.electr.eletrodomesticos.exceptions.AllException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class EletrodomesticoServiceImpl implements EletrodomesticoService {
 
@@ -46,16 +48,33 @@ public class EletrodomesticoServiceImpl implements EletrodomesticoService {
     }
 
     @Override
-    public EletrodomesticoDTO salvarEletrodomestico(String nome, Integer potencia, MultipartFile avatar){
+    public EletrodomesticoDTO salvarEletrodomestico(MultipartFile avatar, String nome, Integer potencia, Integer tempo, Integer quantidade, Integer diasPorMes){
 
         String fileDownloadUri = avatarService.createImageInServer(avatar);
 
-        Eletrodomestico eletrodomestico = new Eletrodomestico();
-        eletrodomestico.setNome(nome);
-        eletrodomestico.setPotencia(potencia);
-        eletrodomestico.setAvatar(fileDownloadUri);
+        Double valorPorMesEmW = calcularConsumoAparelho(potencia, diasPorMes, tempo);
+
+
+        Eletrodomestico eletrodomestico = Eletrodomestico.builder()
+                .setNome(nome)
+                .setPotencia(potencia)
+                .setQuantidade(quantidade)
+                .setTempo(tempo)
+                .setAvatar(fileDownloadUri)
+                .setDiasPorMes(diasPorMes)
+                .setValorPorMes(valorPorMesEmW)
+                .build();
 
         return eletrodomesticoConverter.toModelEletrodomestico(eletrodomesticoRepository.save(eletrodomestico));
+    }
+
+    private Double calcularConsumoAparelho(Integer potencia, Integer diasPorMes, Integer tempo){
+
+        Long horas = (long) (tempo / 60);
+
+        final double valorKw = 0.84;
+
+        return ((potencia * horas * diasPorMes)/1000) * valorKw;
     }
 
     @Override

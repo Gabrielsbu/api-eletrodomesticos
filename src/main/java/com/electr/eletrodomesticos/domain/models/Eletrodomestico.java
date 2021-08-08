@@ -1,9 +1,6 @@
 package com.electr.eletrodomesticos.domain.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(setterPrefix = "set")
 public class Eletrodomestico {
 
     @Id
@@ -20,6 +18,13 @@ public class Eletrodomestico {
     private Long eletroId;
     private String nome;
     private Integer potencia;
+    private Integer tempo;
+    private Integer quantidade;
+    private Integer diasPorMes;
+
+    @Column(name="valor_por_mes", columnDefinition="Decimal(10,2)")
+    private Double valorPorMes;
+
     private String avatar;
     private LocalDateTime createAt;
     private LocalDateTime updatedAt;

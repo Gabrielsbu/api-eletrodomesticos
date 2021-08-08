@@ -17,7 +17,7 @@ public interface EletrodomesticoService {
 
     EletrodomesticoDTO buscarEletrodomesticoPorId(Long eletroId);
 
-    EletrodomesticoDTO salvarEletrodomestico(String nome, Integer potencia, MultipartFile avatar);
+    EletrodomesticoDTO salvarEletrodomestico(MultipartFile avatar, String nome, Integer potencia, Integer tempo, Integer quantidade, Integer diasPorMes);
 
     EletrodomesticoDTO atualizarEletrodomestico(Long eletroId, String nome, Integer potencia, MultipartFile avatar);
 

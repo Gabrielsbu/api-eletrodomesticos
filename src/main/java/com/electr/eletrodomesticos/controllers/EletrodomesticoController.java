@@ -29,11 +29,15 @@ public class EletrodomesticoController {
     }
 
     @PostMapping
-    public EletrodomesticoDTO salvarEletrodomestico(@RequestParam("nome") String nome,
-                                    @RequestParam("potencia") Integer potencia,
-                                    @RequestParam("avatar") MultipartFile avatar){
+    public EletrodomesticoDTO salvarEletrodomestico(@RequestParam("avatar") MultipartFile avatar,
+                                                    @RequestParam("nome") String nome,
+                                                    @RequestParam("potencia") Integer potencia,
+                                                    @RequestParam("tempoDeUso") Integer tempo,
+                                                    @RequestParam("quantidade") Integer quantidade,
+                                                    @RequestParam("dias") Integer diasPorMes
+                                    ){
 
-        return eletrodomesticoService.salvarEletrodomestico(nome, potencia, avatar);
+        return eletrodomesticoService.salvarEletrodomestico(avatar, nome, potencia, tempo, quantidade, diasPorMes);
     }
 
     @PutMapping("/{eletroId}")

@@ -12,4 +12,5 @@ public interface EletrodomesticoConverter {
 
     EletrodomesticoDTO toModelEletrodomestico(Eletrodomestico eletrodomestico);
     List<EletrodomesticoDTO> toCollectionModelEletrodomestico(List<Eletrodomestico> eletrodomesticos);
+    List<Eletrodomestico> toCollectionDTO(List<EletrodomesticoDTO> eletrodomesticos);
 }

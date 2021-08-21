@@ -16,26 +16,32 @@ public class Eletrodomestico {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eletroId;
+    private String avatar;
     private String nome;
-    private Integer potencia;
-    private Integer tempo;
     private Integer quantidade;
+    private Integer tempoEmMinuto;
+    private Integer potencia;
     private Integer diasPorMes;
 
-    @Column(name="valor_por_mes", columnDefinition="Decimal(10,2)")
+    @Column(precision=10, scale=2)
     private Double valorPorMes;
 
-    private String avatar;
-    private LocalDateTime createAt;
-    private LocalDateTime updatedAt;
+    @Column(precision=10, scale=2)
+    private Double kwhPorMes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Simulacao simulacao;
+
+    private LocalDateTime createEletrodomesticoAt;
+    private LocalDateTime updateEletrodomesticoAt;
 
     @PrePersist
     public void prePersist(){
-        this.createAt = LocalDateTime.now();
+        this.createEletrodomesticoAt = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate(){
-        this.updatedAt = LocalDateTime.now();
+        this.updateEletrodomesticoAt = LocalDateTime.now();
     }
 }

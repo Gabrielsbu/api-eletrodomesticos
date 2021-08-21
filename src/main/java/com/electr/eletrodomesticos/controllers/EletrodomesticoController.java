@@ -34,7 +34,7 @@ public class EletrodomesticoController {
                                                     @RequestParam("potencia") Integer potencia,
                                                     @RequestParam("tempoDeUso") Integer tempo,
                                                     @RequestParam("quantidade") Integer quantidade,
-                                                    @RequestParam("dias") Integer diasPorMes
+                                                    @RequestParam("diasPorMes") Integer diasPorMes
                                     ){
 
         return eletrodomesticoService.salvarEletrodomestico(avatar, nome, potencia, tempo, quantidade, diasPorMes);

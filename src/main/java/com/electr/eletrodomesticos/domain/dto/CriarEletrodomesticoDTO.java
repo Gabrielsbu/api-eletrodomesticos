@@ -13,7 +13,7 @@ import lombok.Setter;
 public class CriarEletrodomesticoDTO {
 
     private String nome;
-    private Integer tempo;
+    private Integer tempoEmMinuto;
     private Integer quantidade;
     private Integer potencia;
     private Integer diasPorMes;

@@ -2,7 +2,9 @@ package com.electr.eletrodomesticos.domain.services.Impl;
 
 import com.electr.eletrodomesticos.domain.dto.EletrodomesticoDTO;
 import com.electr.eletrodomesticos.domain.models.Eletrodomestico;
+import com.electr.eletrodomesticos.domain.models.Usuario;
 import com.electr.eletrodomesticos.domain.repositories.EletrodomesticoRepository;
+import com.electr.eletrodomesticos.domain.repositories.UsuarioRepository;
 import com.electr.eletrodomesticos.domain.services.AvatarService;
 import com.electr.eletrodomesticos.domain.services.EletrodomesticoService;
 
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -29,6 +32,7 @@ public class EletrodomesticoServiceImpl implements EletrodomesticoService {
     private final EletrodomesticoRepository eletrodomesticoRepository;
     private final EletrodomesticoConverter eletrodomesticoConverter;
     private final AvatarService avatarService;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
     public List<EletrodomesticoDTO> buscarTodosEletrodomesticos(){
@@ -48,34 +52,24 @@ public class EletrodomesticoServiceImpl implements EletrodomesticoService {
     }
 
     @Override
-    public EletrodomesticoDTO salvarEletrodomestico(MultipartFile avatar, String nome, Integer potencia, Integer tempo, Integer quantidade, Integer diasPorMes){
+    public EletrodomesticoDTO salvarEletrodomestico(
+            MultipartFile avatar, String nome, Integer potencia,
+            Integer tempo, Integer quantidade, Integer diasPorMes){
 
         String fileDownloadUri = avatarService.createImageInServer(avatar);
-
-        Double valorPorMesEmW = calcularConsumoAparelho(potencia, diasPorMes, tempo);
-
 
         Eletrodomestico eletrodomestico = Eletrodomestico.builder()
                 .setNome(nome)
                 .setPotencia(potencia)
                 .setQuantidade(quantidade)
-                .setTempo(tempo)
+                .setTempoEmMinuto(tempo)
                 .setAvatar(fileDownloadUri)
                 .setDiasPorMes(diasPorMes)
-                .setValorPorMes(valorPorMesEmW)
                 .build();
 
         return eletrodomesticoConverter.toModelEletrodomestico(eletrodomesticoRepository.save(eletrodomestico));
     }
 
-    private Double calcularConsumoAparelho(Integer potencia, Integer diasPorMes, Integer tempo){
-
-        Long horas = (long) (tempo / 60);
-
-        final double valorKw = 0.84;
-
-        return ((potencia * horas * diasPorMes)/1000) * valorKw;
-    }
 
     @Override
     public EletrodomesticoDTO atualizarEletrodomestico(Long eletroId, String nome, Integer potencia, MultipartFile avatar){
@@ -102,9 +96,9 @@ public class EletrodomesticoServiceImpl implements EletrodomesticoService {
     @Override
     public ResponseEntity<Void> deletarEletrodomestico(Long eletroId){
 
-        EletrodomesticoDTO usuario = buscarEletrodomesticoPorId(eletroId);
+        EletrodomesticoDTO eletrodomestico = buscarEletrodomesticoPorId(eletroId);
 
-        if( usuario == null ) {
+        if( eletrodomestico == null ) {
             throw new AllException("Não existe eletrodoméstico com este identificador");
         }
 

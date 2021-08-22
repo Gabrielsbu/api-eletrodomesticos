@@ -21,8 +21,8 @@ public class Simulacao {
     @ManyToOne(fetch = FetchType.LAZY)
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "simulacao", fetch = FetchType.LAZY)
-    private List<Eletrodomestico> eletrodomesticos = new ArrayList<>();
+    @OneToMany(mappedBy = "simulacao")
+    private List<Eletrodomestico> eletrodomestico = new ArrayList<>();
 
     @Column(precision=10, scale=2)
     private Double totalValorPorMes;

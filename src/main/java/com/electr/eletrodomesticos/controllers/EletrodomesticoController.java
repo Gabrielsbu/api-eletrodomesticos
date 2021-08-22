@@ -1,6 +1,7 @@
 package com.electr.eletrodomesticos.controllers;
 
 import com.electr.eletrodomesticos.domain.dto.EletrodomesticoDTO;
+import com.electr.eletrodomesticos.domain.dto.EletrodomesticoFullDTO;
 import com.electr.eletrodomesticos.domain.services.EletrodomesticoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -19,17 +20,17 @@ public class EletrodomesticoController {
     private final EletrodomesticoService eletrodomesticoService;
 
     @GetMapping
-    public List<EletrodomesticoDTO> buscarTodosEletrodomesticos() {
+    public List<EletrodomesticoFullDTO> buscarTodosEletrodomesticos() {
         return eletrodomesticoService.buscarTodosEletrodomesticos();
     }
 
     @GetMapping("/{eletroId}")
-    public EletrodomesticoDTO buscarEletrodomesticoPorId(@PathVariable Long eletroId){
+    public EletrodomesticoFullDTO buscarEletrodomesticoPorId(@PathVariable Long eletroId){
         return eletrodomesticoService.buscarEletrodomesticoPorId(eletroId);
     }
 
     @PostMapping
-    public EletrodomesticoDTO salvarEletrodomestico(@RequestParam("avatar") MultipartFile avatar,
+    public EletrodomesticoFullDTO salvarEletrodomestico(@RequestParam("avatar") MultipartFile avatar,
                                                     @RequestParam("nome") String nome,
                                                     @RequestParam("potencia") Integer potencia,
                                                     @RequestParam("tempoDeUso") Integer tempo,
@@ -41,7 +42,7 @@ public class EletrodomesticoController {
     }
 
     @PutMapping("/{eletroId}")
-    public EletrodomesticoDTO atualizarEletrodomestico(@PathVariable Long eletroId, @RequestParam("nome") String nome,
+    public EletrodomesticoFullDTO atualizarEletrodomestico(@PathVariable Long eletroId, @RequestParam("nome") String nome,
                                                        @RequestParam("potencia") Integer potencia,
                                                        @RequestParam("avatar") MultipartFile avatar) {
 

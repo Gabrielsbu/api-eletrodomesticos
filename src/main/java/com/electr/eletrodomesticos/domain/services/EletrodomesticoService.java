@@ -1,6 +1,7 @@
 package com.electr.eletrodomesticos.domain.services;
 
 import com.electr.eletrodomesticos.domain.dto.EletrodomesticoDTO;
+import com.electr.eletrodomesticos.domain.dto.EletrodomesticoFullDTO;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,13 +14,13 @@ import java.util.List;
 @Service
 public interface EletrodomesticoService {
 
-    List<EletrodomesticoDTO> buscarTodosEletrodomesticos();
+    List<EletrodomesticoFullDTO> buscarTodosEletrodomesticos();
 
-    EletrodomesticoDTO buscarEletrodomesticoPorId(Long eletroId);
+    EletrodomesticoFullDTO buscarEletrodomesticoPorId(Long eletroId);
 
-    EletrodomesticoDTO salvarEletrodomestico(MultipartFile avatar, String nome, Integer potencia, Integer tempo, Integer quantidade, Integer diasPorMes);
+    EletrodomesticoFullDTO salvarEletrodomestico(MultipartFile avatar, String nome, Integer potencia, Integer tempo, Integer quantidade, Integer diasPorMes);
 
-    EletrodomesticoDTO atualizarEletrodomestico(Long eletroId, String nome, Integer potencia, MultipartFile avatar);
+    EletrodomesticoFullDTO atualizarEletrodomestico(Long eletroId, String nome, Integer potencia, MultipartFile avatar);
 
     ResponseEntity<Void> deletarEletrodomestico(Long eletroId);
 

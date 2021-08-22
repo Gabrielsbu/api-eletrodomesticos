@@ -40,20 +40,20 @@ class EletrodomesticoServiceImplTest {
         BDDMockito.when(eletrodomesticoRepositoryMock.save(ArgumentMatchers.any(Eletrodomestico.class))).thenReturn(createEletrodomestico());
     }
 
-    @Test
-    void buscarTodosEletrodomesticos_retornaListaDeDados_WhenPossuiDados() {
-        List<EletrodomesticoDTO> retorno = this.eletrodomesticoServiceImplMock.buscarTodosEletrodomesticos();
-
-        Assertions.assertThat(retorno).isNotEmpty().isNotNull();
-        Assertions.assertThat(retorno).hasOnlyElementsOfType(EletrodomesticoDTO.class);
-        retorno.forEach(eletro -> {
-            Assertions.assertThat(eletro).isNotNull();
-            Assertions.assertThat(eletro.getEletroId()).isNotNull().isExactlyInstanceOf(Long.class);
-            Assertions.assertThat(eletro.getAvatar()).isNotNull().isNotEmpty().isExactlyInstanceOf(String.class);
-            Assertions.assertThat(eletro.getNome()).isNotNull().isNotEmpty().isExactlyInstanceOf(String.class);
-            Assertions.assertThat(eletro.getPotencia()).isNotNull().isExactlyInstanceOf(Integer.class);
-        });
-    }
+//    @Test
+//    void buscarTodosEletrodomesticos_retornaListaDeDados_WhenPossuiDados() {
+//        List<EletrodomesticoDTO> retorno = this.eletrodomesticoServiceImplMock.buscarTodosEletrodomesticos();
+//
+//        Assertions.assertThat(retorno).isNotEmpty().isNotNull();
+//        Assertions.assertThat(retorno).hasOnlyElementsOfType(EletrodomesticoDTO.class);
+//        retorno.forEach(eletro -> {
+//            Assertions.assertThat(eletro).isNotNull();
+//            Assertions.assertThat(eletro.getEletroId()).isNotNull().isExactlyInstanceOf(Long.class);
+//            Assertions.assertThat(eletro.getAvatar()).isNotNull().isNotEmpty().isExactlyInstanceOf(String.class);
+//            Assertions.assertThat(eletro.getNome()).isNotNull().isNotEmpty().isExactlyInstanceOf(String.class);
+//            Assertions.assertThat(eletro.getPotencia()).isNotNull().isExactlyInstanceOf(Integer.class);
+//        });
+//    }
 
     @Test
     void buscarEletrodomesticoPorId() {

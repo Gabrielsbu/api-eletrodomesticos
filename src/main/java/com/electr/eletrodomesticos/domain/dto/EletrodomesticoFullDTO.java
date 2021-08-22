@@ -1,28 +1,28 @@
 package com.electr.eletrodomesticos.domain.dto;
 
-import com.electr.eletrodomesticos.domain.models.Simulacao;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
-
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EletrodomesticoDTO {
+public class EletrodomesticoFullDTO {
 
     private Long eletroId;
-    private String nome;
+    private String avatar;
     private Integer quantidade;
+    private String nome;
     private Integer tempoEmHora;
     private Integer potencia;
     private Integer diasPorMes;
+
     private Double valorPorMes;
     private Double kwhPorMes;
-
+    private LocalDateTime createEletrodomesticoAt;
+    private LocalDateTime updateEletrodomesticoAt;
 }

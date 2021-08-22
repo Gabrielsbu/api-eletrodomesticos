@@ -1,6 +1,7 @@
 package com.electr.eletrodomesticos.domain.services.Impl;
 
 import com.electr.eletrodomesticos.domain.dto.EletrodomesticoDTO;
+import com.electr.eletrodomesticos.domain.dto.EletrodomesticoFullDTO;
 import com.electr.eletrodomesticos.domain.models.Eletrodomestico;
 import com.electr.eletrodomesticos.domain.models.Usuario;
 import com.electr.eletrodomesticos.domain.repositories.EletrodomesticoRepository;
@@ -35,8 +36,8 @@ public class EletrodomesticoServiceImpl implements EletrodomesticoService {
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    public List<EletrodomesticoDTO> buscarTodosEletrodomesticos(){
-        List<EletrodomesticoDTO> usuarios = eletrodomesticoConverter.toCollectionModelEletrodomestico(eletrodomesticoRepository.findAll());
+    public List<EletrodomesticoFullDTO> buscarTodosEletrodomesticos(){
+        List<EletrodomesticoFullDTO> usuarios = eletrodomesticoConverter.toCollectionModelEletrodomesticoFull(eletrodomesticoRepository.findAll());
 
         if(usuarios.isEmpty()){
             throw new AllException("A lista de eletrodomésticos se encontra vazia", HttpStatus.NO_CONTENT);
@@ -46,13 +47,13 @@ public class EletrodomesticoServiceImpl implements EletrodomesticoService {
     }
 
     @Override
-    public EletrodomesticoDTO buscarEletrodomesticoPorId(Long eletroId){
-        return eletrodomesticoConverter.toModelEletrodomestico(eletrodomesticoRepository.findById(eletroId)
+    public EletrodomesticoFullDTO buscarEletrodomesticoPorId(Long eletroId){
+        return eletrodomesticoConverter.toEletrodomesticoDTO(eletrodomesticoRepository.findById(eletroId)
                 .orElseThrow(() -> new AllException("Eletrodoméstico não encontrado", HttpStatus.NOT_FOUND)));
     }
 
     @Override
-    public EletrodomesticoDTO salvarEletrodomestico(
+    public EletrodomesticoFullDTO salvarEletrodomestico(
             MultipartFile avatar, String nome, Integer potencia,
             Integer tempo, Integer quantidade, Integer diasPorMes){
 
@@ -62,17 +63,17 @@ public class EletrodomesticoServiceImpl implements EletrodomesticoService {
                 .setNome(nome)
                 .setPotencia(potencia)
                 .setQuantidade(quantidade)
-                .setTempoEmMinuto(tempo)
+                .setTempoEmHora(tempo)
                 .setAvatar(fileDownloadUri)
                 .setDiasPorMes(diasPorMes)
                 .build();
 
-        return eletrodomesticoConverter.toModelEletrodomestico(eletrodomesticoRepository.save(eletrodomestico));
+        return eletrodomesticoConverter.toEletrodomesticoDTO(eletrodomesticoRepository.save(eletrodomestico));
     }
 
 
     @Override
-    public EletrodomesticoDTO atualizarEletrodomestico(Long eletroId, String nome, Integer potencia, MultipartFile avatar){
+    public EletrodomesticoFullDTO atualizarEletrodomestico(Long eletroId, String nome, Integer potencia, MultipartFile avatar){
         String fileDownloadUri = avatarService.createImageInServer(avatar);
 
         Eletrodomestico eletrodomesticoExistente = eletrodomesticoRepository.findById(eletroId)
@@ -90,13 +91,13 @@ public class EletrodomesticoServiceImpl implements EletrodomesticoService {
             eletrodomesticoExistente.setAvatar(fileDownloadUri);
         }
 
-        return eletrodomesticoConverter.toModelEletrodomestico(eletrodomesticoRepository.save(eletrodomesticoExistente));
+        return eletrodomesticoConverter.toEletrodomesticoDTO(eletrodomesticoRepository.save(eletrodomesticoExistente));
     }
 
     @Override
     public ResponseEntity<Void> deletarEletrodomestico(Long eletroId){
 
-        EletrodomesticoDTO eletrodomestico = buscarEletrodomesticoPorId(eletroId);
+        EletrodomesticoFullDTO eletrodomestico = buscarEletrodomesticoPorId(eletroId);
 
         if( eletrodomestico == null ) {
             throw new AllException("Não existe eletrodoméstico com este identificador");

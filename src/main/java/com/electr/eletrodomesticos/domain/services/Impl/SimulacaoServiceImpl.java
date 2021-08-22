@@ -9,23 +9,14 @@ import com.electr.eletrodomesticos.domain.models.Usuario;
 import com.electr.eletrodomesticos.domain.repositories.EletrodomesticoRepository;
 import com.electr.eletrodomesticos.domain.repositories.SimulacaoRepository;
 import com.electr.eletrodomesticos.domain.repositories.UsuarioRepository;
-import com.electr.eletrodomesticos.domain.services.AvatarService;
-import com.electr.eletrodomesticos.domain.services.EletrodomesticoService;
 import com.electr.eletrodomesticos.domain.services.SimulacaoService;
 import com.electr.eletrodomesticos.domain.utils.EletrodomesticoConverter;
 import com.electr.eletrodomesticos.domain.utils.SimulacaoConverter;
 import com.electr.eletrodomesticos.exceptions.AllException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +26,9 @@ import java.util.List;
 public class SimulacaoServiceImpl implements SimulacaoService {
 
     private final SimulacaoRepository simulacaoRepository;
+    private final EletrodomesticoRepository eletrodomesticoRepository;
     private final UsuarioRepository usuarioRepository;
     private final SimulacaoConverter simulacaoConverter;
-    private final EletrodomesticoConverter eletrodomesticoConverter;
 
     @Override
     public SimulacaoDTO procurarSimulacaoPorId(Long simulacaoId){
@@ -47,44 +38,62 @@ public class SimulacaoServiceImpl implements SimulacaoService {
 
     @Override
     public SimulacaoDTO salvarSimulacao(CreateSimulacaoDTO simulacao) {
-        Simulacao createSimulacao = new Simulacao();
-
-        List<EletrodomesticoDTO> eletrodomesticos = new ArrayList<>();
-
-        simulacao.getEletrodomesticos().forEach(eletrodomestico -> {
-
-            eletrodomestico.setKwhPorMes(calcularKWh(eletrodomestico).getKwhPorMes());
-            eletrodomestico.setValorPorMes(calcularKWh(eletrodomestico).getValorPorMes());
-            eletrodomesticos.add(eletrodomestico);
-
-            double totalKwhPorMes = 0.0;
-            totalKwhPorMes = totalKwhPorMes + eletrodomestico.getKwhPorMes();
-
-            double totalPorMes = 0.0;
-            totalPorMes = eletrodomestico.getValorPorMes() + totalPorMes;
-
-            createSimulacao.setTotalKwhPorMes(totalKwhPorMes);
-            createSimulacao.setTotalValorPorMes(totalPorMes);
-        });
-
-        createSimulacao.setEletrodomesticos(eletrodomesticoConverter.toCollectionDTO(eletrodomesticos));
-
         Usuario usuario = usuarioRepository.findById(simulacao.getUsuarioId()).
                 orElseThrow(() -> new AllException("Usuário não encontrado"));
 
+        Simulacao createSimulacao = new Simulacao();
+
+        List<Eletrodomestico> eletrodomesticos = new ArrayList<>();
+
+        double totalKwhPorMes = 0;
+
+        double totalPorMes = 0;
+
+        for(EletrodomesticoDTO eletrodomestico : simulacao.getEletrodomesticos()) {
+
+            if(eletrodomestico.getEletroId() != null) {
+                Eletrodomestico eletrodomesticoExistente =
+                        eletrodomesticoRepository.findById(eletrodomestico.getEletroId())
+                                .orElseThrow(() -> new AllException("Eletrodomestico não encontrado"));
+
+                eletrodomesticoExistente.setKwhPorMes(calcularKWh(eletrodomesticoExistente).getKwhPorMes());
+                eletrodomesticoExistente.setValorPorMes(calcularKWh(eletrodomesticoExistente).getValorPorMes());
+
+                totalKwhPorMes = totalKwhPorMes + eletrodomesticoExistente.getKwhPorMes();
+                totalPorMes = totalPorMes + eletrodomesticoExistente.getValorPorMes();
+
+                eletrodomesticos.add(eletrodomesticoExistente);
+            } else {
+                Eletrodomestico eletrodomesticoCreate = new Eletrodomestico();
+                eletrodomesticoCreate.setNome(eletrodomestico.getNome());
+                eletrodomesticoCreate.setDiasPorMes(eletrodomestico.getDiasPorMes());
+                eletrodomesticoCreate.setPotencia(eletrodomestico.getPotencia());
+                eletrodomesticoCreate.setQuantidade(eletrodomestico.getQuantidade());
+                eletrodomesticoCreate.setTempoEmHora(eletrodomestico.getTempoEmHora());
+                eletrodomesticoCreate.setKwhPorMes(calcularKWh(eletrodomesticoCreate).getKwhPorMes());
+                eletrodomesticoCreate.setValorPorMes(calcularKWh(eletrodomesticoCreate).getValorPorMes());
+
+                totalKwhPorMes = totalKwhPorMes + eletrodomesticoCreate.getKwhPorMes();
+                totalPorMes = totalPorMes + eletrodomesticoCreate.getValorPorMes();
+
+                eletrodomesticos.add(eletrodomesticoCreate);
+            }
+        }
+
+        createSimulacao.setTotalKwhPorMes(totalKwhPorMes);
+        createSimulacao.setTotalValorPorMes(totalPorMes);
+        createSimulacao.setEletrodomestico(eletrodomesticos);
         createSimulacao.setUsuario(usuario);
 
-        simulacaoRepository.save(createSimulacao);
-
-        return simulacaoConverter.toDTO(createSimulacao);
+        return simulacaoConverter.toDTO(simulacaoRepository.save(createSimulacao));
     }
 
-    private EletrodomesticoDTO calcularKWh(EletrodomesticoDTO eletrodomesticoDTO){
-         Long hora = (long) (eletrodomesticoDTO.getTempoEmMinuto() / 60);
-         long kWhPorMes = 30 * eletrodomesticoDTO.getPotencia() * hora * eletrodomesticoDTO.getQuantidade();
-         eletrodomesticoDTO.setKwhPorMes((double) kWhPorMes);
-         eletrodomesticoDTO.setValorPorMes(kWhPorMes * 0.84);
-         return eletrodomesticoDTO;
+    private Eletrodomestico calcularKWh(Eletrodomestico eletrodomestico){
+
+         long kWhPorMes = (long) eletrodomestico.getDiasPorMes() * eletrodomestico.getPotencia() * eletrodomestico.getTempoEmHora() * eletrodomestico.getQuantidade();
+         eletrodomestico.setKwhPorMes((double) kWhPorMes);
+         eletrodomestico.setValorPorMes(kWhPorMes * 0.84);
+         return eletrodomestico;
     }
 
     @Override

@@ -17,7 +17,7 @@ public interface EletrodomesticoConverter {
 
     Eletrodomestico toEletrodomesticoFull(EletrodomesticoFullDTO eletrodomesticoFullDTO);
 
-    List<EletrodomesticoDTO> toCollectionModelEletrodomestico(List<Eletrodomestico> eletrodomesticos);
+    List<Eletrodomestico> toCollectionModelEletrodomestico(List<EletrodomesticoDTO> eletrodomesticos);
 
     List<EletrodomesticoFullDTO> toCollectionModelEletrodomesticoFull(List<Eletrodomestico> eletrodomesticos);
 }

@@ -18,5 +18,5 @@ public class CriarEletrodomesticoDTO {
     private Integer potencia;
     private Integer diasPorMes;
     private String avatar;
-    private Double valorPorMes;
+    private float valorPorMes;
 }

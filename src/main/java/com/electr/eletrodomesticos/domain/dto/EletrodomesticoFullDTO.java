@@ -21,8 +21,8 @@ public class EletrodomesticoFullDTO {
     private Integer potencia;
     private Integer diasPorMes;
 
-    private Double valorPorMes;
-    private Double kwhPorMes;
+    private float valorPorMes;
+    private float kwhPorMes;
     private LocalDateTime createEletrodomesticoAt;
     private LocalDateTime updateEletrodomesticoAt;
 }

@@ -22,7 +22,7 @@ public class EletrodomesticoDTO {
     private Integer tempoEmHora;
     private Integer potencia;
     private Integer diasPorMes;
-    private Double valorPorMes;
-    private Double kwhPorMes;
+    private float valorPorMes;
+    private float kwhPorMes;
 
 }

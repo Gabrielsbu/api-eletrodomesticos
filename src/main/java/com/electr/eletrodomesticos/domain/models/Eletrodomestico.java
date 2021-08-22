@@ -23,15 +23,15 @@ public class Eletrodomestico {
     private Integer potencia;
     private Integer diasPorMes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "simulacao_id")
     private Simulacao simulacao;
 
-    @Column(precision=10, scale=2)
-    private Double valorPorMes;
+    @Column(scale = 2, precision = 10)
+    private float valorPorMes;
 
-    @Column(precision=10, scale=2)
-    private Double kwhPorMes;
+    @Column(scale = 2, precision = 10)
+    private float kwhPorMes;
 
     private LocalDateTime createEletrodomesticoAt;
     private LocalDateTime updateEletrodomesticoAt;

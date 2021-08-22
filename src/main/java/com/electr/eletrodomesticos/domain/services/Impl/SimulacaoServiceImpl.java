@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class SimulacaoServiceImpl implements SimulacaoService {
     private final EletrodomesticoRepository eletrodomesticoRepository;
     private final UsuarioRepository usuarioRepository;
     private final SimulacaoConverter simulacaoConverter;
+    private final EletrodomesticoConverter eletrodomesticoConverter;
 
     @Override
     public SimulacaoDTO procurarSimulacaoPorId(Long simulacaoId){
@@ -43,11 +45,11 @@ public class SimulacaoServiceImpl implements SimulacaoService {
 
         Simulacao createSimulacao = new Simulacao();
 
-        List<Eletrodomestico> eletrodomesticos = new ArrayList<>();
+        List<EletrodomesticoDTO> eletrodomesticos = new ArrayList<>();
 
-        double totalKwhPorMes = 0;
+        float totalKwhPorMes = 0;
 
-        double totalPorMes = 0;
+        float totalPorMes = 0;
 
         for(EletrodomesticoDTO eletrodomestico : simulacao.getEletrodomesticos()) {
 
@@ -58,11 +60,11 @@ public class SimulacaoServiceImpl implements SimulacaoService {
 
                 eletrodomesticoExistente.setKwhPorMes(calcularKWh(eletrodomesticoExistente).getKwhPorMes());
                 eletrodomesticoExistente.setValorPorMes(calcularKWh(eletrodomesticoExistente).getValorPorMes());
-
                 totalKwhPorMes = totalKwhPorMes + eletrodomesticoExistente.getKwhPorMes();
                 totalPorMes = totalPorMes + eletrodomesticoExistente.getValorPorMes();
 
-                eletrodomesticos.add(eletrodomesticoExistente);
+                eletrodomesticos.add(eletrodomesticoConverter.toModelEletrodomestico(eletrodomesticoExistente));
+
             } else {
                 Eletrodomestico eletrodomesticoCreate = new Eletrodomestico();
                 eletrodomesticoCreate.setNome(eletrodomestico.getNome());
@@ -72,17 +74,18 @@ public class SimulacaoServiceImpl implements SimulacaoService {
                 eletrodomesticoCreate.setTempoEmHora(eletrodomestico.getTempoEmHora());
                 eletrodomesticoCreate.setKwhPorMes(calcularKWh(eletrodomesticoCreate).getKwhPorMes());
                 eletrodomesticoCreate.setValorPorMes(calcularKWh(eletrodomesticoCreate).getValorPorMes());
-
                 totalKwhPorMes = totalKwhPorMes + eletrodomesticoCreate.getKwhPorMes();
                 totalPorMes = totalPorMes + eletrodomesticoCreate.getValorPorMes();
 
-                eletrodomesticos.add(eletrodomesticoCreate);
+                eletrodomesticos.add(eletrodomesticoConverter.toModelEletrodomestico(eletrodomesticoCreate));
+
+
             }
         }
 
         createSimulacao.setTotalKwhPorMes(totalKwhPorMes);
         createSimulacao.setTotalValorPorMes(totalPorMes);
-        createSimulacao.setEletrodomestico(eletrodomesticos);
+        createSimulacao.setEletrodomesticos(eletrodomesticoConverter.toCollectionModelEletrodomestico(eletrodomesticos));
         createSimulacao.setUsuario(usuario);
 
         return simulacaoConverter.toDTO(simulacaoRepository.save(createSimulacao));
@@ -90,9 +93,9 @@ public class SimulacaoServiceImpl implements SimulacaoService {
 
     private Eletrodomestico calcularKWh(Eletrodomestico eletrodomestico){
 
-         long kWhPorMes = (long) eletrodomestico.getDiasPorMes() * eletrodomestico.getPotencia() * eletrodomestico.getTempoEmHora() * eletrodomestico.getQuantidade();
-         eletrodomestico.setKwhPorMes((double) kWhPorMes);
-         eletrodomestico.setValorPorMes(kWhPorMes * 0.84);
+         long kWhPorMes = ( (long) eletrodomestico.getPotencia() * eletrodomestico.getTempoEmHora() * eletrodomestico.getDiasPorMes() * eletrodomestico.getQuantidade())/1000;
+         eletrodomestico.setKwhPorMes(kWhPorMes);
+         eletrodomestico.setValorPorMes(kWhPorMes * 0.82f);
          return eletrodomestico;
     }
 

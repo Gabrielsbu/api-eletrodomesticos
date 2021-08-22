@@ -19,10 +19,10 @@ import java.util.List;
 public class SimulacaoDTO {
 
     private Long simulacaoId;
-    private List<Eletrodomestico> eletrodomesticos = new ArrayList<>();
+    private List<EletrodomesticoDTO> eletrodomesticos = new ArrayList<>();
 
-    private Double totalValorPorMes;
-    private Double totalKwhPorMes;
+    private float totalValorPorMes;
+    private float totalKwhPorMes;
 
     private LocalDateTime createSimulationAt;
     private LocalDateTime updateSimulationAt;
